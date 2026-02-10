@@ -1,13 +1,16 @@
-from dash import Dash, html, dcc, callback, Output, Input, State, no_update
+from dash import Dash, dash_table, html, dcc, callback, Output, Input, State, no_update
 import dash_bootstrap_components as dbc
 import plotly.express as px
 from api_requests.access_api import get_token
-from api_requests.artist_albums import albums
-from api_requests.artist_tracks import top_tracks
+from api_requests.artist_albums import albums, album_popularity
+from api_requests.popular_tracks import top_tracks
 from api_requests.search_artist import search
-from api_requests.recommended_artists import artist_recs
+from api_requests.all_tracks import all_tracks, all_track_uris, chunk_list, tracks_popularity
 from PIL import Image
 import urllib.request
+import pandas as pd
+import time
+import re
 
 #create app
 app = Dash(__name__)
@@ -15,75 +18,150 @@ server = app.server
 
 #app layout
 app.layout = dbc.Container([
+    dcc.Store(
+        id="artist-data"
+    ),
     html.H1(children='Spotify Comprehensive Artist Page'),
     html.Div(children=" An application where you can gather album and track information for your favourite artists."),
 
-    html.Div([dcc.Input(id="artist-input", type="text", value="beyonce", placeholder="Input Artist Name"),
+    html.Div([dcc.Input(id="artist-input", type="text", value="frank ocean", placeholder="Input Artist Name"),
     html.Button("Submit", id="submit-button", n_clicks=0)]),
     dbc.Row(
             dcc.Tabs(id="artist-tabs", value="tab-1", children=[
             dcc.Tab(label="Albums", value="tab-1", children=[
-                    html.Div(id="album-covers")
+                    dash_table.DataTable(
+                        id = "album-table",
+                        filter_action="native",
+                        filter_options={"placeholder_text": "Filter column..."},
+                        sort_action="native",
+                        sort_mode="single",
+                        row_deletable=False,
+                        page_action="native",
+                        page_current= 0,
+                        page_size=10,
+                    )
                 ]),
             dcc.Tab(label="Top Tracks", value="tab-2", children=[
-                    html.Div(id="top-tracks")
+                    html.Div(id="top-tracks"),
+                    dcc.Graph(id="tracks-bar"),
                 ])
             ]), 
         )
     ], fluid=False)
 
-# callbacks 
-# album images
 
-#album covers
+# callbacks 
+# gather all api data 
 @callback(
-    Output("album-covers", "children"),
-    Input("artist-tabs", "value"),
-    Input("submit-button", "n_clicks"), #callback triggered upon clicking submit
-    State("artist-input", "value"), #state provides data without triggering the callback 
+    Output("artist-data", "data"),
+    Input("submit-button", "n_clicks"),
+    State("artist-input", "value"),
     prevent_initial_call=True
 )
-def artist_uri(tab, n_clicks, artist):
-    '''user types in artist --> search for artist --> get uri --> get album cover/info'''
-    #api request
+def fetch_data(n_clicks, artist):
+    #get authorization token
     token = get_token()
     #get artist uri
     uri = search(token, artist)
+    #get all album data from artist uri
+    albums_data = albums(token, uri)
+    #get album popularity
+    album_pop = album_popularity(token, albums_data)
+    #get top tracks from artist
+    top = top_tracks(token, uri)
+    #get all tracks from an albums json data
+    tracks = all_tracks(token, albums_data)
+    #get all track ids a list of tracks
+    track_ids = all_track_uris(tracks)
+    #get data grame of track name : popularity score
+    tracks_df = tracks_popularity(token, track_ids)
 
-    #get albums
-    artist_albums = albums(token, uri)
-    # get album image, store as list of images
-    album_covers=[]
-    for album in artist_albums:
-        if album.get("images"):
-            album_covers.append(
-                    html.Img(src = album["images"][0]["url"], #get image url 
-                    style={"width": "150px", "height": "150px"})
-                )
-    return album_covers # images take up half of page
+    return {
+        "albums": albums_data,
+        "album_popularity": album_pop,
+        "top_tracks": top,
+        "tracks_df": tracks_df.to_dict("records")
+    }
+
+
+#album table
+@callback(
+    Output("album-table", "data"),
+    Output("album-table", "columns"),
+    Input("artist-data", "data")
+)
+def album_info(data):
+    '''user types in artist --> search for artist --> get uri --> get album data to create a table'''
+    if not data:
+        return no_update
+
+    # table columns: album name, release date, popularity, and link to listen
+    # key would be album uri, values would be each of the columns
+    table_data = []
+    #extract popularity scores
+    popularity_scores = data["album_popularity"] #stores in dictionary - album uri:score
+
+    for album_item in data["albums"]:
+        #get album uri key to extract popularity value
+        pattern = r"spotify:album:"
+        uri_string = album_item["uri"]
+        uri = re.sub(pattern, "", uri_string)
+
+        #fill table data
+        table_data.append(
+            {"Popularity": popularity_scores[uri], #use album uri to get score for specific album
+            "Name": album_item["name"], 
+            "Release Date": album_item["release_date"],
+            "Album Link": f"[Listen]({album_item['external_urls']['spotify']})"} #markdown format for link
+        )
+
+    #columns - id must match key values, name is what is displayed on the table and can be anything
+    columns = [
+        {"name": "Popularity", "id": "Popularity"},
+        {"name": "Album Name", "id": "Name"},
+        {"name": "Release Date", "id": "Release Date"},
+        {"name": "Album Link", "id":"Album Link", "presentation":"markdown"},
+        ]
+    return table_data, columns
+        
+        
 
 #top tracks
 @callback(
     Output("top-tracks", "children"),
-    Input("artist-tabs", "value"),
-    Input("submit-button", "n_clicks"), #callback triggered upon clicking submit
-    State("artist-input", "value"), #state provides data without triggering the callback 
-    prevent_initial_call=True
+    Input("artist-data", "data")
 )
-def artist_uri(tab, n_clicks, artist):
+def render_top_tracks(data):
     '''user types in artist --> search for artist --> get uri --> get top 10 most popular tracks'''
-    #api request
-    token = get_token()
-    #get artist uri
-    uri = search(token, artist)
-
-    # get top tracks
-    tracks = top_tracks(token, uri)
-    t = [html.Li(track["name"]) for track in tracks]
+    if not data:
+        return no_update
+    #return list of top tracks
+    t = [html.Li(track["name"]) for track in data["top_tracks"]]
     return html.Ul(t)
 
 
-# highlight bottom 10 tracks based on popularity - hipster vibes
+# gather popularity value for all album tracks
+@callback(
+    Output("tracks-bar", "figure"),
+    Input("artist-data", "data")
+)
+def tracks_graph(data):
+    if not data:
+        return no_update
+
+    #get tracks, popularity data frame
+    df = pd.DataFrame(data["tracks_df"])
+
+    #create scatter graph 
+    fig = px.bar(
+        df,
+        x="track",
+        y="popularity",
+        hover_data=["track", "popularity"],
+        
+    )
+    fig.update_xaxes(showticklabels=False)
+    return fig
 
 #run app
 if __name__ == '__main__':
