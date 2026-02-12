@@ -12,6 +12,7 @@
 *.env
 venv/
 api_requests/
+.DS_Store
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
