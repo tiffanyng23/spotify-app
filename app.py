@@ -13,7 +13,7 @@ import time
 import re
 
 #create app
-app = Dash(__name__, external_stylesheets=[dbc.themes.DARKLY])
+app = Dash(external_stylesheets=[dbc.themes.DARKLY])
 server = app.server
 
 #app layout
@@ -21,15 +21,17 @@ app.layout = dbc.Container([
     dcc.Store(
         id="artist-data"
     ),
-    html.H1(children="A Reimagined Spotify Artist Explore Page"),
-    html.Div(children=" Want to explore music of a new artist but don't know where to start? Type in the artist's name, click submit, and get exploring!"),
-
-    html.Div([dcc.Input(id="artist-input", type="text", value="frank ocean", placeholder="Input Artist Name"),
-    html.Button("Submit", id="submit-button", n_clicks=0)]),
+    html.H1(children="A Reimagined Spotify Artist Page"),
+    html.Div([
+            dcc.Input(id="artist-input", type="text", value="", placeholder="Input Artist Name"),
+            html.Button("Submit", id="submit-button", n_clicks=0, disabled=True)
+        ], style={"display": "flex", "justifyContent": "center"}
+    ),
     html.Br(),
     dbc.Row(
             dcc.Tabs(id="artist-tabs", value="tab-1", children=[
-            dcc.Tab(label="Albums", value="tab-1", children=[
+            dcc.Tab(label="Albums", className="album-table", value="tab-1", children=[
+                    html.Br(),
                     dash_table.DataTable(
                         id = "album-table",
                         filter_action="native",
@@ -42,27 +44,62 @@ app.layout = dbc.Container([
                         page_size=10,
                     )
                 ]),
-            dcc.Tab(label="Top Tracks", value="tab-2", children=[
+            dcc.Tab(label="Album Tracks", value="tab-2", children=[
+                    html.Br(),
+                    dbc.Row([
+                        dbc.Col(
+                            dbc.Card(
+                                dbc.CardBody([
+                                    html.H4("Most Hyped Album Tracks"),
+                                    html.Span("(Highest Spotify Popularity Value)"),
+                                    html.P(id="hyped-tracks"),
+                                ])
+                            ),
+                        ),
+                        dbc.Col(
+                            dbc.Card(
+                                dbc.CardBody([
+                                    html.H4("5 Album Tracks Based on Hyped/Hipster Level"),
+                                    dcc.RadioItems(id="hyped-hipster-radio", options = ["Hyped", "Hipster"], value = "Hyped", labelStyle={"margin-right": "20px"}, inline=True),
+                                    html.Br(),
+                                    html.Span("Percentage:"),
+                                    dcc.Slider(0, 100, id="hyped-hipster-slider",value=50),
+                                    html.P(id="custom-tracks-list"),
+                                ])
+                            ),
+                        ),
+                        dbc.Col(
+                            dbc.Card(
+                                dbc.CardBody([
+                                    html.H4("Most Hipster Album Tracks"),
+                                    html.Span("(Lowest Spotify Popularity Value)"),
+                                    html.P(id="hipster-tracks")
+                                ])
+                            ),
+                        )
+                    ],),
                     dbc.Row([
                         dbc.Col([
-                            html.Div([
-                                html.P("Order By:"),
-                                dcc.RadioItems(id="order-radio", options=["Least to Most Popular", "Most to Least Popular"], value= "Most to Least Popular", inline=True),
-                                ]),
-                            ], width=6),
+                            html.Span("Order By: "),
+                            dcc.RadioItems(id="order-radio", options=["Least to Most Popular", "Most to Least Popular"], value= "Most to Least Popular", labelStyle={"margin-right": "20px"}, inline=True),
+                        ], md=4),
                         dbc.Col([
-                            html.Div([
-                                html.P("Select Number of Tracks to Display:"),
-                                dcc.RadioItems(id="tracks-radio", options = ['10', '20', '30', '50', 'All'], value = '20', inline=True),
-                            ]),
-                        ], width=6),
+                            html.Span("Number of Tracks to Display: "),
+                            dcc.RadioItems(id="tracks-radio", options = ['10', '20', '30', '50', 'All'], value = '20', labelStyle={"margin-right": "20px"}, inline=True),
+                        ], md=4),
+                        dbc.Col([],md=4)
                     ]),
                     dbc.Row([
                         dcc.Graph(id="tracks-bar")
                     ]),
                 ]),
-            dcc.Tab(label="Still not sure where to start?", value="tab-3", children=[
-                    html.Div(id="top-tracks"),
+            dcc.Tab(label="Still Not Sure Where to Start?", value="tab-3", children=[
+                    dbc.Card(
+                        dbc.CardBody([
+                            html.H4("Spotify Generated Top Tracks"),
+                            html.P(id="top-tracks")
+                        ])
+                    ),
                 ])
             ]), 
         )
@@ -70,6 +107,18 @@ app.layout = dbc.Container([
 
 
 # callbacks 
+#ensure input button can only be clicked if there is content
+@callback(
+    Output("submit-button", "disabled"),
+    Input("artist-input", "value")
+)
+def set_button_enabled_state(artist_name):
+    if not artist_name:
+        return True
+    else:
+        return False
+
+
 # gather all api data 
 @callback(
     Output("artist-data", "data"),
@@ -132,7 +181,7 @@ def album_info(data):
             "Number of Tracks": popularity_length[uri][1],
             "Name": album_item["name"], 
             "Release Date": album_item["release_date"],
-            "Album Link": f"[Listen]({album_item['external_urls']['spotify']})"} #markdown format for link
+            "Album Link": f"[LISTEN ON SPOTIFY]({album_item['external_urls']['spotify']})"} #markdown format for link
         )
 
     #columns - id must match key values since it's used to populate the table
@@ -160,6 +209,61 @@ def render_top_tracks(data):
     #return list of top tracks
     t = [html.Li(track["name"]) for track in data["top_tracks"]]
     return html.Ul(t)
+
+# Most hyped, most hipster tracks
+@callback(
+    Output("hyped-tracks", "children"),
+    Output("hipster-tracks", "children"),
+    Input("artist-data", "data"),
+)
+def track_lists(data):
+    if not data:
+        return no_update
+    #get all the tracks, convert to a dataframe and sort by popularity in descending order 
+    df = pd.DataFrame(data["tracks_df"]).sort_values("popularity", ascending=False)
+
+    #gather hyped (most popular) and hipster (least popular) tracks
+    hyped_df = df["track"].head(10)
+    hipster_df = df["track"].tail(10)
+    hyped_tracks = [html.Li(track) for track in hyped_df]
+    hipster_tracks = [html.Li(track) for track in hipster_df]
+
+    return html.Ul(hyped_tracks), html.Ul(hipster_tracks)
+
+# custom list tracks
+@callback(
+    Output("custom-tracks-list", "children"),
+    Input("artist-data", "data"),
+    Input("hyped-hipster-slider", "value"),
+    Input("hyped-hipster-radio", "value")
+)
+def track_lists(data, percentage_tracks, hype_or_hipster):
+    if not data:
+        return no_update
+    #get all the tracks, convert to a dataframe and sort by popularity depending on hype/hipster
+    if hype_or_hipster == "Hyped":
+        df = pd.DataFrame(data["tracks_df"]).sort_values("popularity", ascending=False) #want most hyped at top of list
+    else:
+        df = pd.DataFrame(data["tracks_df"]).sort_values("popularity", ascending=True) #want most hipster at top of list
+    
+    #find row that fits in this percentage (e.g. 80% hyped), so we want the tracks closest to the top 20% of list
+    top_percent = float((100-percentage_tracks)/100)
+    row = int(len(df)* top_percent)
+
+    #gather track in that row along with 2 above and 2 below to get 5 tracks 
+    #for 100% 
+    if top_percent == 0:
+        custom_df = df["track"].iloc[0:5]
+        track_list = [html.Li(track) for track in custom_df]
+    #for 0%
+    elif top_percent == 1:
+        custom_df = df["track"].iloc[-5:] # bottom 5 rows
+        track_list = [html.Li(track) for track in custom_df]
+    else:
+        row_index = row - 1
+        custom_df = df["track"].iloc[row_index-2:row_index+3]
+        track_list = [html.Li(track) for track in custom_df]
+    return html.Ul(track_list)
 
 
 # gather popularity value for all album tracks
@@ -196,7 +300,14 @@ def tracks_graph(data, number_tracks, order):
         hover_data=["track", "popularity"],
         orientation="v",
     )
-    fig.update_xaxes(showticklabels=False)
+    fig.update_traces(marker_color="rgb(30,215,96)")
+    fig.update_yaxes(title= "Popularity", title_font={"color": "rgb(255,255,255)"}, tickfont={"color": "rgb(255,255,255)"})
+    fig.update_xaxes(title= "Tracks", title_font={"color": "rgb(255,255,255)"}, showticklabels=False)
+    fig.update_layout(
+        title="Popularity Value of the Artists Tracks",
+        font_color="rgb(255,255,255)",
+        paper_bgcolor="rgb(68,68,68)"
+    )
 
     return fig
 
