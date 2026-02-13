@@ -3,7 +3,7 @@ import base64
 import json
 import requests 
 
-# get top tracks
+#get top tracks
 def top_tracks(token, artist_uri):
     track_url =f"https://api.spotify.com/v1/artists/{artist_uri}/top-tracks"
     artist_header = {

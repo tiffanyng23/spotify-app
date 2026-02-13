@@ -4,7 +4,6 @@ import json
 import re
 import requests 
 
-
 #request artist albums data
 def search(token, artist):
     """ search for artist to get spotify id of artist """
