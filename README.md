@@ -27,7 +27,7 @@ The first tab "Albums" contains a table where you can sort all the artists album
 ### Tracks Tab
 The second tab "Tracks" is ideal for those who are not as much album listeners, but more tracks/playlist listeners. The top half of this tab has 3 main sections. The left side lists the artists top 10 most "Mainstream" tracks while the right side lists the artists top 10 most "Hipster" tracks. This is determined by the popularity score, where the songs with the top 10 highest score is in the "Mainstream" tracks list, while the top 10 lowest score is in the "Hipster" tracks list. In the middle, there is a customizable list where the user can select the degree of "Mainstream" to "Hipster" ratio, which essentially provides a list of tracks with a popularity score that falls in between the left and right lists. 
 
-![Tracks](assets/tracks_lists.png)
+![Tracks](assets/track_lists.png)
 
 At the bottom of this tab there is a customizable bar chart which shows the popularity score of the artists album tracks. Users can filter tracks included based on order of display (Mainstream or Hipster) and percentage of total tracks to display.
 
