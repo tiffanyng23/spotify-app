@@ -1,8 +1,6 @@
 # Spotify Artist Page: Reimagined
 A reimagined Spotify Artist Explore Page where you can search album and track information for any artist. The <a href="https://developer.spotify.com/documentation/web-api">Spotify Web API</a>  was used to gather album and track information. Information was requested for the following endpoints: Get Artist, Get Artist's Albums, Get Artist's Top Tracks, Get Album, Get Album Tracks, and Get Track. 
 
-![Dashboard](assets/tab_1.png)
-
 
 ## Why Did I Make this Page?
 Sometimes I find that I don't know where to start when wanting to explore the music of a new artist. The artist's page on Spotify begins with a list of 10 of their currently most popular tracks, and is followed by a list of their discography and some playlists they are featured in. I find at first glance, it can be difficult to know where to start, especially if they have a lot of albums!. 
@@ -18,6 +16,7 @@ Using the popularity value as a factor for which tracks (and albums) to display 
 
 ## Project Components
 There are 3 tabs: "Albums", "Top Tracks", and "Still Not Sure What to Pick?". 
+![Tabs](assets/tab_1.png)
 
 ### Albums Tab
 The first tab "Albums" contains a table where you can sort all the artists albums based on "popularity", album length, and release date. This allows users to find an album that aligns with how they want to explore an artists music (unfortunately I can no longer access genre information for an album, that would have been great to add). For example, users can check out their most popular album, newest album, earlier work, or a shorter album to get a quick glimpse of the artist. At the right end of the table, there is a column with links at which the user can click to listen to their album of choice on Spotify.
