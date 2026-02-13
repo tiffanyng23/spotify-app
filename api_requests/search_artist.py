@@ -1,8 +1,8 @@
-import requests 
+from api_requests import access_api
 import base64
 import json
 import re
-from api_requests import access_api
+import requests 
 
 
 #request artist albums data

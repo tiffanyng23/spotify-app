@@ -1,9 +1,9 @@
-import requests 
+from api_requests import access_api
 import base64
 import json
-import re
-from api_requests import access_api
 import pandas as pd
+import re
+import requests 
 import time
 
 def all_tracks(token, albums_data):

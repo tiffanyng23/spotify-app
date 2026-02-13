@@ -1,15 +1,16 @@
-from dash import Dash, dash_table, html, dcc, callback, Output, Input, State, no_update
-import dash_bootstrap_components as dbc
-import plotly.express as px
 from api_requests.access_api import get_token
+from api_requests.all_tracks import all_tracks, all_track_uris, chunk_list, tracks_popularity
 from api_requests.artist_albums import albums, album_popularity_length
 from api_requests.popular_tracks import top_tracks
 from api_requests.search_artist import search
-from api_requests.all_tracks import all_tracks, all_track_uris, chunk_list, tracks_popularity
+from dash import Dash, dash_table, html, dcc, callback, Output, Input, State, no_update
+import dash_bootstrap_components as dbc
 import pandas as pd
-import time
-import re
+import plotly.express as px
 import random
+import re
+import time
+
 
 #create app
 app = Dash(external_stylesheets=[dbc.themes.DARKLY])

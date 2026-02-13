@@ -1,9 +1,9 @@
-import requests 
+from api_requests import access_api
 import base64
 import json
 import re
+import requests 
 import time
-from api_requests import access_api
 
 
 #request artist albums data

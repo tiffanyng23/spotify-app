@@ -1,7 +1,7 @@
-import requests 
+from api_requests import access_api
 import base64
 import json
-from api_requests import access_api
+import requests 
 
 # get top tracks
 def top_tracks(token, artist_uri):
