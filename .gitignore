@@ -11,7 +11,7 @@
 *.sln.docstates
 *.env
 venv/
-api_requests/
+api_requests/access_api.py
 .DS_Store
 
 # User-specific files (MonoDevelop/Xamarin Studio)
