@@ -1,8 +1,3 @@
-from api_requests.access_api import get_token
-from api_requests.all_tracks import all_tracks, all_track_uris, chunk_list, tracks_popularity
-from api_requests.artist_albums import albums, album_popularity_length
-from api_requests.popular_tracks import top_tracks
-from api_requests.search_artist import search
 from dash import Dash, dash_table, html, dcc, callback, Output, Input, State, no_update
 import dash_bootstrap_components as dbc
 import pandas as pd
@@ -10,6 +5,11 @@ import plotly.express as px
 import random
 import re
 import time
+from api_requests.access_api import get_token
+from api_requests.all_tracks import all_tracks, all_track_uris, chunk_list, tracks_popularity
+from api_requests.artist_albums import albums, album_popularity_length
+from api_requests.popular_tracks import top_tracks
+from api_requests.search_artist import search
 
 
 #create app
@@ -42,7 +42,12 @@ app.layout = dbc.Container([
                         page_action="native",
                         page_current= 0,
                         page_size=10,
-                    )
+                        style_data_conditional=[{
+                                "if": {"state": "active"},
+                                "backgroundColor": "rgba(0, 116, 217, 0.3)",
+                                "border": "1px solid rgb(0, 116, 217)"
+                            }],
+                        ),
                 ]),
             dcc.Tab(label="Album Tracks", value="tab-2", children=[
                     html.Br(),
@@ -61,16 +66,17 @@ app.layout = dbc.Container([
                                 dbc.CardBody([
                                     html.H4("Tracks Based on Mainstream vs. Hipster Level"),
                                     html.Br(),
-                                    html.Label("Mainstream vs. Hipster"),
+                                    html.Label("Hipster vs. Mainstream"),
                                     dcc.Slider(
                                         min = 0, 
                                         max = 100, 
                                         step =1,
                                         id="popular-hipster-slider",
                                         marks={
-                                            "0": "Hipster",
-                                            "100": "Mainstream",
+                                            "0": {"label": "Hipster", "style": {"color": "rgb(255,255,255)", "fontSize": "9px"}},
+                                            "100": {"label": "Mainstream", "style": {"color": "rgb(255,255,255)", "fontSize": "9px"}},
                                         },
+                                        allow_direct_input=False,
                                         value=50),
                                     html.Ul(id="custom-tracks-list"),
                                 ])
@@ -94,7 +100,27 @@ app.layout = dbc.Container([
                         ], md=4),
                         dbc.Col([
                             html.Label("Percentage of Total Tracks to Display: "),
-                            dcc.Slider(0, 100, 10, id="tracks-graph", value = 20),
+                            dcc.Slider(
+                                0, 
+                                100, 
+                                5, 
+                                marks={
+                                    "0": {"label": "0", "style": {"color": "rgb(255,255,255)"}},
+                                    "10": {"label": "10", "style": {"color": "rgb(255,255,255)"}},
+                                    "20": {"label": "20", "style": {"color": "rgb(255,255,255)"}},
+                                    "30": {"label": "30", "style": {"color": "rgb(255,255,255)"}},
+                                    "40": {"label": "40", "style": {"color": "rgb(255,255,255)"}},
+                                    "50": {"label": "50", "style": {"color": "rgb(255,255,255)"}},
+                                    "60": {"label": "60", "style": {"color": "rgb(255,255,255)"}},
+                                    "70": {"label": "70", "style": {"color": "rgb(255,255,255)"}},
+                                    "80": {"label": "80", "style": {"color": "rgb(255,255,255)"}},
+                                    "90": {"label": "90", "style": {"color": "rgb(255,255,255)"}},
+                                    "100": {"label": "100", "style": {"color": "rgb(255,255,255)"}},
+                                },
+                                id="tracks-graph", 
+                                allow_direct_input=False,
+                                tooltip={"style": {"color": "rgb(0,0,0)", "fontSize": "12px"}},
+                                value = 20),
                         ], md=4),
                     ]),
                     dbc.Row([
