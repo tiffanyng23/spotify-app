@@ -42,9 +42,14 @@ app.layout = dbc.Container([
                         page_action="native",
                         page_current= 0,
                         page_size=10,
+                        style_filter_conditional=[{
+                                "if": {"column_editable": False},
+                                "backgroundColor": "rgba(127, 75, 196, 0.6)",
+                                "border": "1px solid rgba(255, 255, 255, 1)"
+                            }],
                         style_data_conditional=[{
                                 "if": {"state": "active"},
-                                "backgroundColor": "rgba(127, 75, 196, 0.3)",
+                                "backgroundColor": "rgba(127, 75, 196, 0.6)",
                                 "border": "1px solid rgba(127, 75, 196, 1)"
                             }],
                         ),
@@ -134,7 +139,7 @@ app.layout = dbc.Container([
                              dbc.Card(
                                 dbc.CardBody([
                                     html.H4("Spotify Generated Top Tracks"),
-                                    html.P("Similar to the Most Popular Tracks list but includes non-album and featured tracks."),
+                                    html.P("Similar to the Most Popular Tracks list but includes non-album tracks and tracks the artist contributed to as a feature."),
                                     html.P(id="top-tracks"),
                                     html.Br(),
                                     html.H4("Random Album Generator"),

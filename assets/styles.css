@@ -57,7 +57,7 @@ span {
 }
 
 #album-table th {
-    background-color: rgb(0,0,0);
+    background-color: rgba(127,75,196,0.6);
     border: 2px solid rgb(255, 255, 255);
     color: rgb(255,255,255);
     font-family: "Default sans-serif", "Helvetica Neue", Helvetica, Arial;
