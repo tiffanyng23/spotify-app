@@ -44,8 +44,8 @@ app.layout = dbc.Container([
                         page_size=10,
                         style_data_conditional=[{
                                 "if": {"state": "active"},
-                                "backgroundColor": "rgba(0, 116, 217, 0.3)",
-                                "border": "1px solid rgb(0, 116, 217)"
+                                "backgroundColor": "rgba(127, 75, 196, 0.3)",
+                                "border": "1px solid rgba(127, 75, 196, 1)"
                             }],
                         ),
                 ]),
