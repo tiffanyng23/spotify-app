@@ -352,7 +352,7 @@ def tracks_graph(data, order, percent_of_tracks):
     fig.update_yaxes(title= "Popularity", title_font={"color": "rgb(255,255,255)"}, tickfont={"color": "rgb(255,255,255)"})
     fig.update_xaxes(title= "Tracks", title_font={"color": "rgb(255,255,255)"}, showticklabels=False)
     fig.update_layout(
-        title="Popularity Value of Album Tracks (Tracks Appearing in Multiple Albums are Ordered by its Highest Popularity Value)",
+        title="Popularity Value of Album Tracks <br><sup>Note: Tracks appearing in multiple albums will be visibly stacked in one bar. Hover over the bar to view the popularity of track in each album appearance.</sup>",
         font_color="rgb(255,255,255)",
         paper_bgcolor="rgb(68,68,68)"
     )
