@@ -130,6 +130,7 @@ app.layout = dbc.Container([
                     ]),
                     dbc.Row([
                         dcc.Graph(id="tracks-bar"),
+                        dcc.Store(id="bar-hyperlink") #need to create output id 
                     ]),
                 ]),
             dcc.Tab(label="Still Not Sure Where to Start?", value="tab-3", children=[
@@ -340,7 +341,7 @@ def tracks_graph(data, order, percent_of_tracks):
     #create scatter graph 
     fig = px.bar(
         filtered_df,
-        x="uri",
+        x= "url",
         y="popularity",
         custom_data=["track", "popularity", "album"],
         orientation="v",
@@ -352,14 +353,46 @@ def tracks_graph(data, order, percent_of_tracks):
             "Popularity: %{customdata[1]}<br>" +
             "Album: %{customdata[2]}<extra></extra>")
     fig.update_yaxes(title= "Popularity", title_font={"color": "rgb(255,255,255)"}, tickfont={"color": "rgb(255,255,255)"})
-    fig.update_xaxes(title= "Tracks", title_font={"color": "rgb(255,255,255)"}, showticklabels=False, )
+    fig.update_xaxes(title= "Tracks", title_font={"color": "rgb(255,255,255)"}, showticklabels=False)
     fig.update_layout(
-        title="Popularity Value of Album Tracks <br><sup>Note: There are some tracks that appear in multiple albums which are displayed in separate bars. Hover over the bar to view the popularity of the track based on album.</sup>",
+        title="Popularity Value of Album Tracks <br><sup>Note: Click on the bar to listen to the track. There are some tracks that appear in multiple albums which are displayed in separate bars (hover to view the popularity of the track based on album).</sup>",
         font_color="rgb(255,255,255)",
         paper_bgcolor="rgb(68,68,68)"
     )
 
     return fig
+
+#hyperlink bar chart
+@app.callback(
+    Output("bar-hyperlink", "data"),
+    Input("tracks-bar", "clickData"), # stores coordinates of clicked point in dictionary format
+    prevent_initial_call=True # only want to run callback when bar is clicked 
+)
+def click_bar(clickData):
+    if not clickData:
+        return no_update
+    #use click data to gather coordinates of click event
+    data_point = clickData["points"][0] #extract coordinates values from clickData dictionary
+    #extract x value which is the url
+    url = data_point["x"]
+
+    #returns url, open url using app.clientside_callback below
+    return url
+
+#opens track link in hyperlinked bar chart
+app.clientside_callback(
+    """
+    function(url) {
+        if (url) {
+            window.open(url, "_blank");
+        }
+        return null;
+    }
+    """,
+    Output("bar-hyperlink", "data", allow_duplicate=True),
+    Input("bar-hyperlink", "data"), # contains the url to be opened, this function opens the url in a new tab
+    prevent_initial_call=True
+)
 
 #top tracks
 @callback(

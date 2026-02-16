@@ -28,7 +28,7 @@ The second tab "Tracks" is ideal for those who are not as much album listeners, 
 
 ![Tracks](assets/track_lists.png)
 
-At the bottom of this tab there is a customizable bar chart which shows the popularity score of the artists album tracks. Users can filter tracks included based on order of display (Mainstream or Hipster) and percentage of total tracks to display.
+At the bottom of this tab there is a customizable bar chart which shows the popularity score of the artists album tracks. Users can filter tracks included based on order of display (Mainstream or Hipster) and percentage of total tracks to display. The bars are hyperlinked, so users can click on a bar to listen to the track.
 
 ![Tracks](assets/bar_chart.png)
 
