@@ -104,7 +104,7 @@ def tracks_popularity(token, track_ids):
                 track_url = track["external_urls"]["spotify"]
 
                 #add each track to the dictionary
-                track_popularity[track["uri"]] = {"track" :track["name"], "popularity":track["popularity"], "url": track_url}
+                track_popularity[track["uri"]] = {"track" :track["name"], "popularity":track["popularity"], "url": track_url, "album": track["album"]["name"]}
         except requests.exceptions.HTTPError as http_error:
             print(f"Track Data Request HTTP Error: {http_error}")
         except requests.exceptions.RequestException as error:
@@ -115,9 +115,10 @@ def tracks_popularity(token, track_ids):
 
     #convert dictionary to dataframe to allow for smoother graphing
     #track, popularity, url represents the columns, sort in descending order by default
-    track_pop_df = (pd.DataFrame.from_dict(track_popularity, columns=["uri", "track", "popularity", "url"], orient="index"))
+    track_pop_df = (pd.DataFrame.from_dict(track_popularity, columns=["track", "popularity", "url", "album"], orient="index"))
     #make sure all popularity values are numbers and not strings
     track_pop_df["popularity"] = pd.to_numeric(track_pop_df["popularity"], errors="coerce")
     track_pop_df = track_pop_df.sort_values(by="popularity", ascending=False)
+    track_pop_df = track_pop_df.reset_index(names = "uri")
 
     return track_pop_df

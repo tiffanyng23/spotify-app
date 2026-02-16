@@ -335,24 +335,26 @@ def tracks_graph(data, order, percent_of_tracks):
     number_tracks = len(sorted_df)*(float(percent_of_tracks)/100)
 
     #display requested number of tracks
-    if number_tracks == "All":
-        filtered_df = sorted_df
-    else:
-        filtered_df = sorted_df.head(int(number_tracks))
+    filtered_df = sorted_df.head(int(number_tracks))
 
     #create scatter graph 
     fig = px.bar(
         filtered_df,
-        x="track",
+        x="uri",
         y="popularity",
-        hover_data=["track", "popularity"],
+        custom_data=["track", "popularity", "album"],
         orientation="v",
     )
-    fig.update_traces(marker_color="rgb(30,215,96)")
+    fig.update_traces(
+        marker_color="rgb(30,215,96)",
+        hovertemplate=
+            "Track: %{customdata[0]}<br>" +
+            "Popularity: %{customdata[1]}<br>" +
+            "Album: %{customdata[2]}<extra></extra>")
     fig.update_yaxes(title= "Popularity", title_font={"color": "rgb(255,255,255)"}, tickfont={"color": "rgb(255,255,255)"})
     fig.update_xaxes(title= "Tracks", title_font={"color": "rgb(255,255,255)"}, showticklabels=False, )
     fig.update_layout(
-        title="Popularity Value of Album Tracks <br><sup>Note: Tracks appearing in multiple albums will be visibly stacked in one bar. Hover over the bar to view the popularity of the track in each album appearance.</sup>",
+        title="Popularity Value of Album Tracks <br><sup>Note: There are some tracks that appear in multiple albums which are displayed in separate bars. Hover over the bar to view the popularity of the track based on album.</sup>",
         font_color="rgb(255,255,255)",
         paper_bgcolor="rgb(68,68,68)"
     )
