@@ -3,9 +3,7 @@ A reimagined Spotify Artist Explore Page where you can search album and track in
 
 
 ## Why Did I Make this Page?
-Sometimes I find that I don't know where to start when wanting to explore the music of a new artist. The artist's page on Spotify begins with a list of 10 of their currently most popular tracks, and is followed by a list of their discography and some playlists they are featured in. I find at first glance, it can be difficult to know where to start, especially if they have a lot of albums!. 
-
-I created a reimagined Spotify Artist Explore Page to helps users decide where to start when exploring a new artist. It has a lot of the same components seen on Spotify, but focuses more on exploring artist albums and tracks from their albums. I wanted this page to focus on albums, and tracks found in their albums (not so much songs they are featured in, extra singles, or from compilation albums), since I feel albums show more of the artists artistic/musical vision. Personally, I prefer listening to albums over playlists since I like exploring overarching themes, transitions, and sounds across tracks in an album. This reflects how I approached the layout and focus of this page. 
+I created a reimagined Spotify Artist Explore Page to helps users decide where to start when exploring a new artist, as looking through an artist's discography can be overwhelming especially if they have a lot of tracks/albums. It has a lot of the same components seen on Spotify, but focuses more on exploring artist albums and tracks from their albums. I wanted this page to focus on albums, and tracks found in their albums (not so much songs they are featured in, extra singles, or from compilation albums), since I feel albums show more of the artists artistic/musical vision. Personally, I prefer listening to albums over playlists since I like exploring overarching themes, transitions, and sounds across tracks in an album. This reflects how I approached the layout and focus of this page. 
 
 The criteria used to organize these songs and tracks is somewhat based on Spotify's popularity score which is defined on the Spotify Web API page as: 
 
