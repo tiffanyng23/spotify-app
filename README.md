@@ -1,4 +1,6 @@
 # Spotify Artist Page: Reimagined
+View Project on Fly: <a href="https://spotify-app.fly.dev/"> Spotify Artist Page</a>
+
 A reimagined Spotify Artist Explore Page where you can search album and track information for any artist. The <a href="https://developer.spotify.com/documentation/web-api">Spotify Web API</a>  was used to gather album and track information. Information was requested for the following endpoints: Get Artist, Get Artist's Albums, Get Artist's Top Tracks, Get Album, Get Album Tracks, and Get Track. 
 
 
