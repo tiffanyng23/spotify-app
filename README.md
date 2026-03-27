@@ -1,7 +1,7 @@
 # Spotify Artist Discovery Page
 View Project on Fly: <a href="https://spotify-app.fly.dev/"> Spotify Artist Page</a>
 
-A Spotify Artist Discovery Page with the aim of being a tool to discover the music of an artist of the users choosing, with a focus on artist albums and album tracks. This page is meant to be used as an additional tool alongside Spotify, as it is used to search for a specific artist the user is interested in thoroughly exploring the music of. It is not meant to be used to search for specific tracks, since the regular Spotify App is effective for that use case. The <a href="https://developer.spotify.com/documentation/web-api">Spotify Web API</a>  was used to gather album and track information. Information was requested for the following endpoints: Get Artist, Get Artist's Albums, Get Artist's Top Tracks, Get Album, Get Album Tracks, and Get Track. 
+A Spotify Artist Discovery Page with the aim of being an artist exploration tool, with a focus on exploring a new artist's albums and album tracks. This dashboard is meant to be used as an additional tool alongside Spotify, to discover the music of a new artist the user is interested in. It is not meant to be used to search for specific tracks, as the regular Spotify App is effective for that use case. The <a href="https://developer.spotify.com/documentation/web-api">Spotify Web API</a>  was used to gather album and track information. Information was requested for the following endpoints: Get Artist, Get Artist's Albums, Get Artist's Top Tracks, Get Album, Get Album Tracks, and Get Track. 
 
 
 ## Why Did I Make this Page?
