@@ -1,11 +1,14 @@
-# Spotify Artist Page: Reimagined
+# Spotify Artist Discovery Page
 View Project on Fly: <a href="https://spotify-app.fly.dev/"> Spotify Artist Page</a>
 
-A reimagined Spotify Artist Explore Page where you can search album and track information for any artist. The <a href="https://developer.spotify.com/documentation/web-api">Spotify Web API</a>  was used to gather album and track information. Information was requested for the following endpoints: Get Artist, Get Artist's Albums, Get Artist's Top Tracks, Get Album, Get Album Tracks, and Get Track. 
+A Spotify Artist Discovery Page with the aim of being a tool to discover the music of an artist of the users choosing, with a focus on artist albums and album tracks. This page is meant to be used as an additional tool alongside Spotify, as it is used to search for a specific artist the user is interested in thoroughly exploring the music of. It is not meant to be used to search for specific tracks, since the regular Spotify App is effective for that use case. The <a href="https://developer.spotify.com/documentation/web-api">Spotify Web API</a>  was used to gather album and track information. Information was requested for the following endpoints: Get Artist, Get Artist's Albums, Get Artist's Top Tracks, Get Album, Get Album Tracks, and Get Track. 
 
 
 ## Why Did I Make this Page?
-I created a reimagined Spotify Artist Explore Page to helps users decide where to start when exploring a new artist, as looking through an artist's discography can be overwhelming especially if they have a lot of tracks/albums. It has a lot of the same components seen on Spotify, but focuses more on exploring artist albums and tracks from their albums. I wanted this page to focus on albums, and tracks found in their albums (not so much songs they are featured in, extra singles, or from compilation albums), since I feel albums show more of the artists artistic/musical vision. Personally, I prefer listening to albums over playlists since I like exploring overarching themes, transitions, and sounds across tracks in an album. This reflects how I approached the layout and focus of this page. 
+I created a reimagined Spotify Artist Discovery Page to guide users on where to start when exploring a new artist. Looking through an artist's discography can be overwhelming, especially if they have a lot of tracks/albums. This page has a lot of the same components seen on Spotify, but focuses more on exploring artist albums and tracks from their albums, instead of searching for specific tracks. This page is meant to be used with the Spotify App, as it serves a different purpose.
+
+I wanted this page to focus on albums, and tracks found in their albums (not so much songs they are featured in, extra singles, or from compilation albums), since I feel albums show more of the artists artistic/musical vision. Personally, I prefer listening to albums over playlists since I like exploring overarching themes, transitions, and sounds across tracks in an album. This reflects how I approached the layout and focus of this page. 
+
 
 The criteria used to organize these songs and tracks is somewhat based on Spotify's popularity score which is defined on the Spotify Web API page as: 
 
@@ -15,9 +18,12 @@ Using the popularity value as a factor for which tracks (and albums) to display 
 
 
 ## Project Components
+### Search Bar
+The search bar is where the user will input an artist of their choosing. This page is only used to search for specific artists to explore their discography, not for searching specific tracks. Therefore, users should not be inputting a track name in the search bar. 
+
+### Tabs
 There are 3 tabs: "Albums", "Top Tracks", and "Still Not Sure What to Pick?". 
 ![Tabs](assets/tab_1.png)
-
 ### Albums Tab
 The first tab "Albums" contains a table where you can sort all the artists albums based on "popularity", album length, and release date. This allows users to find an album that aligns with how they want to explore an artists music (unfortunately I can no longer access genre information for an album, that would have been great to add). In addition to sorting, users can filter based on specific conditions. For example, users can filter for albums that have a popularity value above or below a specific number by typing in the "Filter column..." cell in each column (e.g. > 60, < 70, or 50 >= etc.), or filter for albums above or below a specific number of tracks, or albums that were released at a specific year. At the right end of the table, there is a column with links at which the user can click to listen to their album of choice on Spotify.
 
